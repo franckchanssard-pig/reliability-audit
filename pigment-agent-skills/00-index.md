@@ -18,6 +18,7 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 | `08-security-permissions.md` | Security | Roles, Permissions, Access Rights, SCIM |
 | `09-scenarios-versioning.md` | Scenarios | Versions, What-If, Snapshots, Data Slices |
 | `10-architecture-best-practices.md` | Architecture | Design patterns, naming, anti-patterns |
+| `11-workspace-reliability-audit.md` | Audit & Quality | Workspace health checks, reliability assessment |
 
 ## Quick Reference by Task
 
@@ -49,6 +50,12 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 ### Planning and Forecasting
 1. `09-scenarios-versioning.md` - Scenarios and versions
 2. `10-architecture-best-practices.md` - Planning architecture
+
+### Auditing a Workspace
+1. `11-workspace-reliability-audit.md` - Complete audit framework
+2. `10-architecture-best-practices.md` - Anti-patterns to detect
+3. `05-performance-optimization.md` - Performance assessment
+4. `08-security-permissions.md` - Security audit checklist
 
 ## Key Concepts Summary
 

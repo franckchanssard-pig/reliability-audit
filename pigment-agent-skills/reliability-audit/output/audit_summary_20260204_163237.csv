@@ -1,0 +1,16 @@
+Metric,Value
+Timestamp,2026-02-04T16:32:37.410349
+Total Score,40.3
+Grade,D
+Performance Score,2.5
+Optimization Score,12.8
+Complexity Score,7.5
+Views Score,17.5
+
+Data Summary,
+executions_records,35051
+views_records,7870
+armset_records,1473
+unique_applications,31
+unique_metrics,2569
+date_range,"(Timestamp('2026-02-03 00:00:00'), Timestamp('2026-02-03 00:00:00'))"

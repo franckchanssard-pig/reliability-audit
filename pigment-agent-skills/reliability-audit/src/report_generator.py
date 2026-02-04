@@ -513,13 +513,14 @@ class ReportGenerator:
 
         rows = ""
         for f in complexity.findings[:15]:
+            avg_rows_str = f"{f.avg_computed_rows:,.0f}" if f.avg_computed_rows else "-"
             rows += f"""
             <tr>
                 <td>{f.metric_name}</td>
                 <td>{f.application}</td>
                 <td><span class="severity {f.severity}">{f.dimensions}</span></td>
                 <td>{f.avg_execution_time:,.0f} ms</td>
-                <td>{f.avg_computed_rows:,.0f if f.avg_computed_rows else '-'}</td>
+                <td>{avg_rows_str}</td>
             </tr>"""
 
         findings_table = ""

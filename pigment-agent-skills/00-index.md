@@ -19,6 +19,7 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 | `09-scenarios-versioning.md` | Scenarios | Versions, What-If, Snapshots, Data Slices |
 | `10-architecture-best-practices.md` | Architecture | Design patterns, naming, anti-patterns |
 | `11-workspace-reliability-audit.md` | Audit & Quality | Workspace health checks, reliability assessment |
+| `12-programmatic-audit-apis.md` | API Auditing | Audit Logs API, Metadata API, SIEM integration |
 
 ## Quick Reference by Task
 
@@ -53,9 +54,10 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 
 ### Auditing a Workspace
 1. `11-workspace-reliability-audit.md` - Complete audit framework
-2. `10-architecture-best-practices.md` - Anti-patterns to detect
-3. `05-performance-optimization.md` - Performance assessment
-4. `08-security-permissions.md` - Security audit checklist
+2. `12-programmatic-audit-apis.md` - Automated auditing via APIs
+3. `10-architecture-best-practices.md` - Anti-patterns to detect
+4. `05-performance-optimization.md` - Performance assessment
+5. `08-security-permissions.md` - Security audit checklist
 
 ## Key Concepts Summary
 

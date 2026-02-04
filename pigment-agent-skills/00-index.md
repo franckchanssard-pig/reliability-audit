@@ -20,6 +20,7 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 | `10-architecture-best-practices.md` | Architecture | Design patterns, naming, anti-patterns |
 | `11-workspace-reliability-audit.md` | Audit & Quality | Workspace health checks, reliability assessment |
 | `12-programmatic-audit-apis.md` | API Auditing | Audit Logs API, Metadata API, SIEM integration |
+| `13-performance-data-analysis.md` | Performance Analysis | Execution data analysis, cross-referencing, scoring |
 
 ## Quick Reference by Task
 
@@ -55,9 +56,10 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 ### Auditing a Workspace
 1. `11-workspace-reliability-audit.md` - Complete audit framework
 2. `12-programmatic-audit-apis.md` - Automated auditing via APIs
-3. `10-architecture-best-practices.md` - Anti-patterns to detect
-4. `05-performance-optimization.md` - Performance assessment
-5. `08-security-permissions.md` - Security audit checklist
+3. `13-performance-data-analysis.md` - Execution data analysis & scoring
+4. `10-architecture-best-practices.md` - Anti-patterns to detect
+5. `05-performance-optimization.md` - Performance assessment
+6. `08-security-permissions.md` - Security audit checklist
 
 ## Key Concepts Summary
 

@@ -1,0 +1,188 @@
+"""
+Scoring module for calculating overall reliability score.
+"""
+
+from dataclasses import dataclass, field
+from typing import Dict, List
+from datetime import datetime
+
+from .config import Config
+from .data_loader import PerformanceData
+from .analyzers import (
+    PerformanceAnalyzer,
+    ScopingAnalyzer,
+    ComplexityAnalyzer,
+    WorkloadAnalyzer,
+)
+from .analyzers.performance_analyzer import PerformanceAnalysisResult
+from .analyzers.scoping_analyzer import ScopingAnalysisResult
+from .analyzers.complexity_analyzer import ComplexityAnalysisResult
+from .analyzers.workload_analyzer import WorkloadAnalysisResult
+
+
+@dataclass
+class ReliabilityScore:
+    """Overall reliability score and breakdown."""
+
+    # Total score
+    total_score: float = 0.0
+    grade: str = "F"
+
+    # Component scores (each 0-25)
+    performance_score: float = 0.0
+    optimization_score: float = 0.0
+    complexity_score: float = 0.0
+    views_score: float = 0.0
+
+    # Metadata
+    timestamp: str = ""
+    data_summary: Dict = field(default_factory=dict)
+
+    # Analysis results
+    performance_result: PerformanceAnalysisResult = None
+    scoping_result: ScopingAnalysisResult = None
+    complexity_result: ComplexityAnalysisResult = None
+    workload_result: WorkloadAnalysisResult = None
+
+    # Top recommendations
+    recommendations: List[str] = field(default_factory=list)
+
+
+class ReliabilityScorer:
+    """Calculate overall reliability score from analysis results."""
+
+    def __init__(self, config: Config):
+        self.config = config
+        self.grades = config.grades
+
+    def score(self, data: PerformanceData) -> ReliabilityScore:
+        """Run all analyzers and calculate overall score."""
+
+        result = ReliabilityScore()
+        result.timestamp = datetime.now().isoformat()
+        result.data_summary = data.summary()
+
+        # Run analyzers
+        perf_analyzer = PerformanceAnalyzer(self.config)
+        result.performance_result = perf_analyzer.analyze(data)
+        result.performance_score = result.performance_result.score
+
+        scoping_analyzer = ScopingAnalyzer(self.config)
+        result.scoping_result = scoping_analyzer.analyze(data)
+        result.optimization_score = result.scoping_result.score
+
+        complexity_analyzer = ComplexityAnalyzer(self.config)
+        result.complexity_result = complexity_analyzer.analyze(data)
+        result.complexity_score = result.complexity_result.score
+
+        workload_analyzer = WorkloadAnalyzer(self.config)
+        result.workload_result = workload_analyzer.analyze(data)
+        result.views_score = result.workload_result.score
+
+        # Calculate total score
+        result.total_score = round(
+            result.performance_score +
+            result.optimization_score +
+            result.complexity_score +
+            result.views_score,
+            1
+        )
+
+        # Determine grade
+        result.grade = self._calculate_grade(result.total_score)
+
+        # Generate recommendations
+        result.recommendations = self._generate_recommendations(result)
+
+        return result
+
+    def _calculate_grade(self, score: float) -> str:
+        """Convert numeric score to letter grade."""
+
+        if score >= self.grades.A:
+            return "A"
+        elif score >= self.grades.B:
+            return "B"
+        elif score >= self.grades.C:
+            return "C"
+        elif score >= self.grades.D:
+            return "D"
+        else:
+            return "F"
+
+    def _generate_recommendations(self, result: ReliabilityScore) -> List[str]:
+        """Generate actionable recommendations based on findings."""
+
+        recommendations = []
+
+        # Performance recommendations
+        perf = result.performance_result
+        if perf and perf.critical_count > 0:
+            recommendations.append(
+                f"🔴 CRITICAL: {perf.critical_count} metrics have execution time > 30s. "
+                "Review and optimize these immediately."
+            )
+
+        if perf and perf.p95_execution_time_ms > 10000:
+            recommendations.append(
+                f"⚠️ P95 execution time is {perf.p95_execution_time_ms/1000:.1f}s. "
+                "Consider breaking complex calculations into smaller metrics."
+            )
+
+        # Scoping recommendations
+        scoping = result.scoping_result
+        if scoping and scoping.no_change_pct > 30:
+            recommendations.append(
+                f"⚠️ {scoping.no_change_pct:.0f}% of formula executions are not scoped. "
+                "Enable scoped calculations to reduce computation time."
+            )
+
+        if scoping and scoping.potential_savings_ms > 3600000:
+            savings_hours = scoping.potential_savings_ms / 3600000
+            recommendations.append(
+                f"💡 Enabling scoping could save ~{savings_hours:.1f} hours of compute time."
+            )
+
+        # Complexity recommendations
+        complexity = result.complexity_result
+        if complexity and complexity.critical_count > 0:
+            recommendations.append(
+                f"🔴 {complexity.critical_count} metrics have > 10 dimensions. "
+                "Consider using properties instead of dimensions where possible."
+            )
+
+        if complexity and complexity.avg_dimensions > 5:
+            recommendations.append(
+                f"⚠️ Average dimensions per metric is {complexity.avg_dimensions:.1f}. "
+                "High dimensionality impacts performance."
+            )
+
+        if complexity and complexity.dims_time_correlation and complexity.dims_time_correlation > 0.5:
+            recommendations.append(
+                f"📊 Strong correlation ({complexity.dims_time_correlation:.2f}) between "
+                "dimensions and execution time. Reducing dimensions will improve performance."
+            )
+
+        # Workload recommendations
+        workload = result.workload_result
+        if workload and workload.top_app_pct > 50:
+            recommendations.append(
+                f"⚠️ Top application consumes {workload.top_app_pct:.0f}% of total compute. "
+                "Consider splitting into multiple applications."
+            )
+
+        if workload and workload.slow_views_pct > 20:
+            recommendations.append(
+                f"⚠️ {workload.slow_views_pct:.0f}% of views are slow (> 3s). "
+                "Add page selectors and filters to reduce data displayed."
+            )
+
+        # General recommendations based on grade
+        if result.grade in ["D", "F"]:
+            recommendations.append(
+                "🚨 Overall reliability score is poor. "
+                "Prioritize addressing critical issues before adding new features."
+            )
+
+        # Limit to top 10 recommendations
+        return recommendations[:10]

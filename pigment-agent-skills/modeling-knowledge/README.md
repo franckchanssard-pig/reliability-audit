@@ -1,10 +1,8 @@
-# Pigment Modeler Agent - Skills Index
+# Pigment Modeling Knowledge Base
 
-## Purpose
+Knowledge base for understanding and building models in Pigment EPM platform.
 
-This collection of skill files provides comprehensive knowledge for an AI agent specialized in Pigment modeling. Each file covers a specific domain of Pigment expertise.
-
-## Skill Files Overview
+## Contents
 
 | File | Topic | Description |
 |------|-------|-------------|
@@ -18,9 +16,6 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 | `08-security-permissions.md` | Security | Roles, Permissions, Access Rights, SCIM |
 | `09-scenarios-versioning.md` | Scenarios | Versions, What-If, Snapshots, Data Slices |
 | `10-architecture-best-practices.md` | Architecture | Design patterns, naming, anti-patterns |
-| `11-workspace-reliability-audit.md` | Audit & Quality | Workspace health checks, reliability assessment |
-| `12-programmatic-audit-apis.md` | API Auditing | Audit Logs API, Metadata API, SIEM integration |
-| `13-performance-data-analysis.md` | Performance Analysis | Execution data analysis, cross-referencing, scoring |
 
 ## Quick Reference by Task
 
@@ -53,15 +48,7 @@ This collection of skill files provides comprehensive knowledge for an AI agent 
 1. `09-scenarios-versioning.md` - Scenarios and versions
 2. `10-architecture-best-practices.md` - Planning architecture
 
-### Auditing a Workspace
-1. `11-workspace-reliability-audit.md` - Complete audit framework
-2. `12-programmatic-audit-apis.md` - Automated auditing via APIs
-3. `13-performance-data-analysis.md` - Execution data analysis & scoring
-4. `10-architecture-best-practices.md` - Anti-patterns to detect
-5. `05-performance-optimization.md` - Performance assessment
-6. `08-security-permissions.md` - Security audit checklist
-
-## Key Concepts Summary
+## Key Concepts
 
 ### Block Types
 - **Dimension List** (Blue): Structure/axes of model
@@ -92,20 +79,3 @@ FILTER → SELECT → BY (Agg) → REMOVE → BY (Alloc) → ADD
 - **Community**: https://community.pigment.com
 - **Academy**: https://academy.pigment.com
 - **Support**: https://support.pigment.com
-
-## Usage Notes for Agent
-
-When assisting with Pigment modeling:
-
-1. **Identify the task type** and reference appropriate skill files
-2. **Start with fundamentals** if user is new to Pigment
-3. **Provide syntax examples** from the skill files
-4. **Warn about common anti-patterns** from best practices
-5. **Cite official documentation** when available
-6. **Recommend performance optimizations** proactively
-
-## Version
-
-- Created: 2026-02-03
-- Sources: Pigment Documentation (kb.pigment.com), Pigment Community (community.pigment.com)
-- Coverage: Pigment EPM platform fundamentals through advanced architecture

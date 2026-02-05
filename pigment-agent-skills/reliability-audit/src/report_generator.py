@@ -63,74 +63,97 @@ class ReportGenerator:
 
         files.append(str(summary_file))
 
-        # Performance findings CSV
-        if score.performance_result and score.performance_result.findings:
-            perf_file = output_dir / f"performance_findings_{timestamp}.csv"
-            with open(perf_file, "w", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow([
-                    "Entity Type", "Entity ID", "Entity Name", "Application",
-                    "Severity", "Avg Execution Time (ms)", "Max Execution Time (ms)",
-                    "Execution Count", "Avg Computed Rows", "Dimensions"
-                ])
-                for finding in score.performance_result.findings:
+        if self.config.include_details:
+            # Metric performance findings CSV
+            if score.performance_result and score.performance_result.metric_findings:
+                perf_file = output_dir / f"metric_performance_findings_{timestamp}.csv"
+                with open(perf_file, "w", newline="") as f:
+                    writer = csv.writer(f)
                     writer.writerow([
-                        finding.entity_type,
-                        finding.entity_id,
-                        finding.entity_name,
-                        finding.application,
-                        finding.severity,
-                        finding.avg_execution_time,
-                        finding.max_execution_time,
-                        finding.execution_count,
-                        finding.avg_computed_rows or "",
-                        finding.dimensions or "",
+                        "Metric ID", "Metric Name", "Application",
+                        "Severity", "Avg Execution Time (ms)", "Max Execution Time (ms)",
+                        "Execution Count", "Avg Computed Rows", "Dimensions"
                     ])
-            files.append(str(perf_file))
+                    for finding in score.performance_result.metric_findings:
+                        writer.writerow([
+                            finding.entity_id,
+                            finding.entity_name,
+                            finding.application,
+                            finding.severity,
+                            finding.avg_execution_time,
+                            finding.max_execution_time,
+                            finding.execution_count,
+                            finding.avg_computed_rows or "",
+                            finding.dimensions or "",
+                        ])
+                files.append(str(perf_file))
 
-        # Scoping findings CSV
-        if score.scoping_result and score.scoping_result.findings:
-            scoping_file = output_dir / f"scoping_findings_{timestamp}.csv"
-            with open(scoping_file, "w", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow([
-                    "Metric ID", "Metric Name", "Application", "Scoped Level",
-                    "Avg Execution Time (ms)", "Total Execution Time (ms)",
-                    "Execution Count", "Potential Savings %"
-                ])
-                for finding in score.scoping_result.findings:
+            # View performance findings CSV
+            if score.performance_result and score.performance_result.view_findings:
+                view_file = output_dir / f"view_performance_findings_{timestamp}.csv"
+                with open(view_file, "w", newline="") as f:
+                    writer = csv.writer(f)
                     writer.writerow([
-                        finding.metric_id,
-                        finding.metric_name,
-                        finding.application,
-                        finding.scoped_level,
-                        finding.avg_execution_time,
-                        finding.total_execution_time,
-                        finding.execution_count,
-                        finding.potential_savings_pct,
+                        "View ID", "View Name", "Application",
+                        "Severity", "Avg Execution Time (ms)", "Max Execution Time (ms)",
+                        "Execution Count", "Avg Computed Rows"
                     ])
-            files.append(str(scoping_file))
+                    for finding in score.performance_result.view_findings:
+                        writer.writerow([
+                            finding.entity_id,
+                            finding.entity_name,
+                            finding.application,
+                            finding.severity,
+                            finding.avg_execution_time,
+                            finding.max_execution_time,
+                            finding.execution_count,
+                            finding.avg_computed_rows or "",
+                        ])
+                files.append(str(view_file))
 
-        # Complexity findings CSV
-        if score.complexity_result and score.complexity_result.findings:
-            complexity_file = output_dir / f"complexity_findings_{timestamp}.csv"
-            with open(complexity_file, "w", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow([
-                    "Metric ID", "Metric Name", "Application", "Dimensions",
-                    "Severity", "Avg Execution Time (ms)", "Avg Computed Rows"
-                ])
-                for finding in score.complexity_result.findings:
+            # Scoping findings CSV
+            if score.scoping_result and score.scoping_result.findings:
+                scoping_file = output_dir / f"scoping_findings_{timestamp}.csv"
+                with open(scoping_file, "w", newline="") as f:
+                    writer = csv.writer(f)
                     writer.writerow([
-                        finding.metric_id,
-                        finding.metric_name,
-                        finding.application,
-                        finding.dimensions,
-                        finding.severity,
-                        finding.avg_execution_time,
-                        finding.avg_computed_rows or "",
+                        "Metric ID", "Metric Name", "Application", "Scoped Level",
+                        "Avg Execution Time (ms)", "Total Execution Time (ms)",
+                        "Execution Count", "Potential Savings %"
                     ])
-            files.append(str(complexity_file))
+                    for finding in score.scoping_result.findings:
+                        writer.writerow([
+                            finding.metric_id,
+                            finding.metric_name,
+                            finding.application,
+                            finding.scoped_level,
+                            finding.avg_execution_time,
+                            finding.total_execution_time,
+                            finding.execution_count,
+                            finding.potential_savings_pct,
+                        ])
+                files.append(str(scoping_file))
+
+            # Complexity findings CSV
+            if score.complexity_result and score.complexity_result.findings:
+                complexity_file = output_dir / f"complexity_findings_{timestamp}.csv"
+                with open(complexity_file, "w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow([
+                        "Metric ID", "Metric Name", "Application", "Dimensions",
+                        "Severity", "Avg Execution Time (ms)", "Avg Computed Rows"
+                    ])
+                    for finding in score.complexity_result.findings:
+                        writer.writerow([
+                            finding.metric_id,
+                            finding.metric_name,
+                            finding.application,
+                            finding.dimensions,
+                            finding.severity,
+                            finding.avg_execution_time,
+                            finding.avg_computed_rows or "",
+                        ])
+                files.append(str(complexity_file))
 
         return files
 
@@ -307,10 +330,10 @@ class ReportGenerator:
             </div>
 
             <div class="score-breakdown">
-                {self._render_score_item("Performance", score.performance_score, 25)}
-                {self._render_score_item("Optimization", score.optimization_score, 25)}
-                {self._render_score_item("Complexity", score.complexity_score, 25)}
-                {self._render_score_item("Views", score.views_score, 25)}
+                {self._render_score_item("Performance", score.performance_score, self.config.scoring.performance_weight)}
+                {self._render_score_item("Optimization", score.optimization_score, self.config.scoring.optimization_weight)}
+                {self._render_score_item("Complexity", score.complexity_score, self.config.scoring.complexity_weight)}
+                {self._render_score_item("Views", score.views_score, self.config.scoring.views_weight)}
             </div>
         </div>
 
@@ -318,7 +341,9 @@ class ReportGenerator:
 
         {self._render_recommendations(score)}
 
-        {self._render_performance_findings(score)}
+        {self._render_metric_performance_findings(score)}
+
+        {self._render_view_performance_findings(score)}
 
         {self._render_scoping_analysis(score)}
 
@@ -386,17 +411,19 @@ class ReportGenerator:
             {items}
         </div>"""
 
-    def _render_performance_findings(self, score: ReliabilityScore) -> str:
-        if not score.performance_result or not score.performance_result.findings:
+    def _render_metric_performance_findings(self, score: ReliabilityScore) -> str:
+        if not self.config.include_details:
+            return ""
+
+        if not score.performance_result or not score.performance_result.metric_findings:
             return ""
 
         perf = score.performance_result
 
         rows = ""
-        for f in perf.findings[:20]:
+        for f in perf.metric_findings[:20]:
             rows += f"""
             <tr>
-                <td>{f.entity_type}</td>
                 <td>{f.entity_name}</td>
                 <td>{f.application}</td>
                 <td><span class="severity {f.severity}">{f.severity}</span></td>
@@ -408,22 +435,22 @@ class ReportGenerator:
 
         return f"""
         <div class="findings">
-            <h2>⚡ Performance Findings</h2>
+            <h2>⚡ Metric Performance Findings</h2>
             <div class="stats-grid">
                 <div class="stat">
-                    <div class="stat-value">{perf.avg_execution_time_ms:,.0f} ms</div>
+                    <div class="stat-value">{perf.metric_avg_execution_time_ms:,.0f} ms</div>
                     <div class="stat-label">Avg Execution Time</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">{perf.p95_execution_time_ms:,.0f} ms</div>
+                    <div class="stat-value">{perf.metric_p95_execution_time_ms:,.0f} ms</div>
                     <div class="stat-label">P95 Execution Time</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" style="color: #ef4444">{perf.critical_count}</div>
+                    <div class="stat-value" style="color: #ef4444">{perf.metric_critical_count}</div>
                     <div class="stat-label">Critical Issues</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" style="color: #f59e0b">{perf.warning_count}</div>
+                    <div class="stat-value" style="color: #f59e0b">{perf.metric_warning_count}</div>
                     <div class="stat-label">Warnings</div>
                 </div>
             </div>
@@ -431,7 +458,6 @@ class ReportGenerator:
             <table>
                 <thead>
                     <tr>
-                        <th>Type</th>
                         <th>Name</th>
                         <th>Application</th>
                         <th>Severity</th>
@@ -445,7 +471,70 @@ class ReportGenerator:
             </table>
         </div>"""
 
+    def _render_view_performance_findings(self, score: ReliabilityScore) -> str:
+        if not self.config.include_details:
+            return ""
+
+        if not score.performance_result or not score.performance_result.view_findings:
+            return ""
+
+        perf = score.performance_result
+
+        rows = ""
+        for f in perf.view_findings[:20]:
+            rows += f"""
+            <tr>
+                <td>{f.entity_name}</td>
+                <td>{f.application}</td>
+                <td><span class="severity {f.severity}">{f.severity}</span></td>
+                <td>{f.avg_execution_time:,.0f} ms</td>
+                <td>{f.max_execution_time:,.0f} ms</td>
+                <td>{f.execution_count}</td>
+                <td>{f.avg_computed_rows or '-'}</td>
+            </tr>"""
+
+        return f"""
+        <div class="findings">
+            <h2>🖥️ View Performance Findings</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-value">{perf.view_avg_execution_time_ms:,.0f} ms</div>
+                    <div class="stat-label">Avg Render Time</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">{perf.view_p95_execution_time_ms:,.0f} ms</div>
+                    <div class="stat-label">P95 Render Time</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="color: #ef4444">{perf.view_critical_count}</div>
+                    <div class="stat-label">Critical Issues</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="color: #f59e0b">{perf.view_warning_count}</div>
+                    <div class="stat-label">Warnings</div>
+                </div>
+            </div>
+            <h3>Top Issues</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Application</th>
+                        <th>Severity</th>
+                        <th>Avg Time</th>
+                        <th>Max Time</th>
+                        <th>Count</th>
+                        <th>Avg Rows</th>
+                    </tr>
+                </thead>
+                <tbody>{rows}</tbody>
+            </table>
+        </div>"""
+
     def _render_scoping_analysis(self, score: ReliabilityScore) -> str:
+        if not self.config.include_details:
+            return ""
+
         if not score.scoping_result:
             return ""
 
@@ -506,6 +595,9 @@ class ReportGenerator:
         </div>"""
 
     def _render_complexity_findings(self, score: ReliabilityScore) -> str:
+        if not self.config.include_details:
+            return ""
+
         if not score.complexity_result:
             return ""
 
@@ -574,6 +666,9 @@ class ReportGenerator:
         </div>"""
 
     def _render_workload_analysis(self, score: ReliabilityScore) -> str:
+        if not self.config.include_details:
+            return ""
+
         if not score.workload_result:
             return ""
 

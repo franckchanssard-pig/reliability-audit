@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 import pandas as pd
-import numpy as np
 
 from ..config import Config
 from ..data_loader import PerformanceData

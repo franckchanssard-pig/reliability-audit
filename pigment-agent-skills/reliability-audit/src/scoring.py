@@ -117,15 +117,15 @@ class ReliabilityScorer:
 
         # Performance recommendations
         perf = result.performance_result
-        if perf and perf.critical_count > 0:
+        if perf and perf.metric_critical_count > 0:
             recommendations.append(
-                f"🔴 CRITICAL: {perf.critical_count} metrics have execution time > 30s. "
+                f"🔴 CRITICAL: {perf.metric_critical_count} metrics have execution time > 30s. "
                 "Review and optimize these immediately."
             )
 
-        if perf and perf.p95_execution_time_ms > 10000:
+        if perf and perf.metric_p95_execution_time_ms > 10000:
             recommendations.append(
-                f"⚠️ P95 execution time is {perf.p95_execution_time_ms/1000:.1f}s. "
+                f"⚠️ P95 execution time is {perf.metric_p95_execution_time_ms/1000:.1f}s. "
                 "Consider breaking complex calculations into smaller metrics."
             )
 

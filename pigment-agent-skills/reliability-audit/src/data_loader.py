@@ -72,9 +72,10 @@ class PerformanceData:
 class DataLoader:
     """Load performance data from CSV files and optionally enrich with APIs."""
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, quiet: bool = False):
         self.config = config
         self.base_dir = Path(__file__).parent.parent
+        self.quiet = quiet
 
     def load(self) -> PerformanceData:
         """Load all available data sources."""
@@ -140,12 +141,14 @@ class DataLoader:
             csv_path = self.base_dir / path
 
         if not csv_path.exists():
-            print(f"Warning: {data_type} CSV not found at {csv_path}")
+            if not self.quiet:
+                print(f"Warning: {data_type} CSV not found at {csv_path}")
             return None
 
         try:
             df = pd.read_csv(csv_path)
-            print(f"Loaded {len(df)} records from {data_type} ({csv_path.name})")
+            if not self.quiet:
+                print(f"Loaded {len(df)} records from {data_type} ({csv_path.name})")
 
             # Convert numeric columns
             df = self._convert_numeric_columns(df, data_type)
@@ -156,7 +159,8 @@ class DataLoader:
             return df
 
         except Exception as e:
-            print(f"Error loading {data_type} CSV: {e}")
+            if not self.quiet:
+                print(f"Error loading {data_type} CSV: {e}")
             return None
 
     def _convert_numeric_columns(self, df: pd.DataFrame, data_type: str) -> pd.DataFrame:
@@ -226,22 +230,43 @@ class DataLoader:
             ]
 
         # Filter by date range
-        if self.config.filter_date_from:
-            date_from = pd.to_datetime(self.config.filter_date_from)
-            if data.has_executions:
-                data.executions = data.executions[
-                    data.executions["day"] >= date_from
-                ]
-            if data.has_views:
-                data.views = data.views[data.views["day"] >= date_from]
+        if self.config.filter_date_from or self.config.filter_date_to:
+            date_from = pd.to_datetime(self.config.filter_date_from) if self.config.filter_date_from else None
+            date_to = pd.to_datetime(self.config.filter_date_to) if self.config.filter_date_to else None
 
-        if self.config.filter_date_to:
-            date_to = pd.to_datetime(self.config.filter_date_to)
             if data.has_executions:
-                data.executions = data.executions[
-                    data.executions["day"] <= date_to
-                ]
+                data.executions = self._filter_by_date(
+                    data.executions,
+                    ["day", "executionStartedAt"],
+                    date_from,
+                    date_to,
+                )
             if data.has_views:
-                data.views = data.views[data.views["day"] <= date_to]
+                data.views = self._filter_by_date(
+                    data.views,
+                    ["day", "executionStartedAt"],
+                    date_from,
+                    date_to,
+                )
 
         return data
+
+    def _filter_by_date(
+        self,
+        df: pd.DataFrame,
+        candidates: list,
+        date_from: Optional[pd.Timestamp],
+        date_to: Optional[pd.Timestamp],
+    ) -> pd.DataFrame:
+        """Filter a dataframe by the first available date column."""
+
+        date_col = next((c for c in candidates if c in df.columns), None)
+        if not date_col:
+            return df
+
+        if date_from is not None:
+            df = df[df[date_col] >= date_from]
+        if date_to is not None:
+            df = df[df[date_col] <= date_to]
+
+        return df

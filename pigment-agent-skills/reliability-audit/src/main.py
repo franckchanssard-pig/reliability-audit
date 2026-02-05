@@ -24,7 +24,7 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import load_config, Config
+from src.config import load_config
 from src.data_loader import DataLoader
 from src.scoring import ReliabilityScorer
 from src.report_generator import ReportGenerator
@@ -168,17 +168,17 @@ Examples:
 
     # Set default paths if not provided
     if not config.executions_csv:
-        config.executions_csv = "sample-data/Executions_anonymized_basic.csv"
+        config.executions_csv = "sample-data/1. Executions.csv"
     if not config.views_csv:
-        config.views_csv = "sample-data/Views_Executions_anonymized_basic.csv"
+        config.views_csv = "sample-data/6. Views Executions.csv"
     if not config.armset_csv:
-        config.armset_csv = "sample-data/Armset_Upmset_Executions_anonymized_basic.csv"
+        config.armset_csv = "sample-data/2. Armset and Upmset Executions.csv"
 
     # Load data
     if not args.quiet:
         print("\n📂 Loading data...")
 
-    loader = DataLoader(config)
+    loader = DataLoader(config, quiet=args.quiet)
     data = loader.load()
 
     if not data.has_executions and not data.has_views:

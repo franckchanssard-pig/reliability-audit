@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Reliability Audit - Default",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/pigment-agent-skills/reliability-audit/src/main.py",
+      "cwd": "${workspaceFolder}/pigment-agent-skills/reliability-audit",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Reliability Audit - Explicit CSVs",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/pigment-agent-skills/reliability-audit/src/main.py",
+      "cwd": "${workspaceFolder}/pigment-agent-skills/reliability-audit",
+      "args": [
+        "--executions",
+        "sample-data/1. Executions.csv",
+        "--views",
+        "sample-data/6. Views Executions.csv",
+        "--armset",
+        "sample-data/2. Armset and Upmset Executions.csv",
+        "--format",
+        "all"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}
